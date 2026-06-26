@@ -35,8 +35,6 @@ Before deploying applications via ArgoCD ApplicationSets, the following
 resources must be created on the hub cluster. These are common to **both**
 push and pull delivery models.
 
----
-
 ## Step 1 — Bind ManagedClusterSets to the openshift-gitops namespace
 
 > **Manual step** — corresponds to `bootstrap/00-managedclustersetbinding.yaml`
