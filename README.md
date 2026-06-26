@@ -168,14 +168,3 @@ Verify the `acm-placement` ConfigMap exists:
 ```bash
 oc get configmap acm-placement -n openshift-gitops -o yaml
 ```
-
----
-
-## Next steps
-
-Once the bootstrap resources are in place, create an ApplicationSet using one
-of the delivery models:
-
-- [Overview and common concepts](../../acm_applications/argocd/README.md)
-- [Push model](../../acm_applications/argocd/demo1/acm_apps_demo1-appset_push_model.md)
-- [Pull model](../../acm_applications/argocd/demo1/acm_apps_demo1-appset_pull_model.md)
