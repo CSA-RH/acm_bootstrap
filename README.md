@@ -17,27 +17,27 @@ acm_bootstrap/
 Bootstrap resources required before deploying applications via ArgoCD
 ApplicationSets (push or pull model):
 
-- **ManagedClusterSetBinding** : binds cluster sets to the `openshift-gitops` namespace.
-- **Placement** : selects clusters for GitOpsCluster registration and app targeting.
-- **GitOpsCluster** : registers managed clusters in ArgoCD as cluster secrets.
+- **ManagedClusterSetBinding**: binds cluster sets to the `openshift-gitops` namespace.
+- **Placement**: selects clusters for GitOpsCluster registration and app targeting.
+- **GitOpsCluster**: registers managed clusters in ArgoCD as cluster secrets.
 
 See [applications/README.md](applications/README.md) for step-by-step instructions.
 
 ## Governance
 
-_(placeholder : governance bootstrap resources will be added here)_
+_(placeholder: governance bootstrap resources will be added here)_
 
 ---
 
-# ACM Bootstrap : GitOps Application Prerequisites
+# ACM Bootstrap: GitOps Application Prerequisites
 
 Before deploying applications via ArgoCD ApplicationSets, the following
 resources must be created on the hub cluster. These are common to **both**
 push and pull delivery models.
 
-## Step 1 : Bind ManagedClusterSets to the openshift-gitops namespace
+## Step 1: Bind ManagedClusterSets to the openshift-gitops namespace
 
-> **Manual step** : corresponds to `bootstrap/00-managedclustersetbinding.yaml`
+> **Manual step**: corresponds to `bootstrap/00-managedclustersetbinding.yaml`
 
 The `Placement` in `openshift-gitops` can only see clusters from sets that are
 bound to that namespace.
@@ -63,16 +63,16 @@ oc get managedclustersetbinding -n openshift-gitops
 
 ---
 
-## Step 2 : Create the Placements
+## Step 2: Create the Placements
 
-> **Manual step** : corresponds to `bootstrap/01-placement-gitops.yaml` and
+> **Manual step**: corresponds to `bootstrap/01-placement-gitops.yaml` and
 > `bootstrap/01-placement-todo-app.yaml`
 
 Two Placements are used:
 
-- **`clusters-for-gitops`** : used by GitOpsCluster to register all clusters
+- **`clusters-for-gitops`**: used by GitOpsCluster to register all clusters
   in the set as ArgoCD cluster secrets. No predicates (selects all).
-- **`todo-app-placement`** : used by the ApplicationSet to select target
+- **`todo-app-placement`**: used by the ApplicationSet to select target
   clusters for the application. Filters by `environment: prod`.
 
 ```bash
@@ -122,9 +122,9 @@ oc get placementdecision -n openshift-gitops \
 
 ---
 
-## Step 3 : Create the GitOpsCluster
+## Step 3: Create the GitOpsCluster
 
-> **Manual step** : corresponds to `bootstrap/02-gitopscluster.yaml`
+> **Manual step**: corresponds to `bootstrap/02-gitopscluster.yaml`
 
 `GitOpsCluster` tells ACM to register each cluster selected by the
 `clusters-for-gitops` Placement as an ArgoCD cluster secret. This is what
