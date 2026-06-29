@@ -4,6 +4,8 @@ Common prerequisites for ACM-managed GitOps deployments. These resources must
 be applied on the hub cluster before creating ApplicationSets or governance
 policies.
 
+---
+
 ## Deployment Models Overview
 
 ACM supports three ways to deploy applications via ArgoCD ApplicationSets.
@@ -31,17 +33,30 @@ To configure and link OpenShift GitOps in ACM, we can register a set of one or m
 
 After registering, we can deploy applications to those clusters using ApplicationSets managing from the ACM Hub Applications. Then, we can set up a continuous GitOps environment to automate application consistency across clusters in development, staging, and production environments.
 
-### ManagedClusterSet
+## 1. Clone repository
+
+```bash
+git clone https://github.com/CSA-RH/acm_bootstrap.git
+cd acm_bootstrap
+```
+
+### 2. ManagedClusterSet
 
 First, we need to create managed cluster sets and add managed clusters to those managed cluster sets:
 We will use in the examples the Global ClusterSet, wich is created automatically in ACM installation time.
 
-### ManagedClusterSetBinding
+### 3. ManagedClusterSetBinding
 
 Create managed cluster set binding to the namespace where Argo CD or OpenShift GitOps is deployed.
 Our ManagedClusterSetBinding object assigns ManagedClusterSet to the particular namespace so that Placements can discover clusters from that set. Our target namespace is openshift-gitops.
 
+Apply resource:
 
+```bash
+oc apply -f applications/base/00-managedclustersetbinding.yaml
+```
+
+Example:
 ```yaml
 # applications/base/00-managedclustersetbinding.yaml
 apiVersion: cluster.open-cluster-management.io/v1beta2
@@ -53,10 +68,17 @@ spec:
   clusterSet: global
 ```
 
-### Placement
+### 4. Placement
 
 In the namespace that is used in managed cluster set binding, create a placement custom resource to select a set of managed clusters to register to an ArgoCD or OpenShift GitOps operator instance. It can filter by the cluster sets or other predicates like, for example, labels. In our scenario, placement filters all the managed clusters, which have the `vendor: OpenShift` label.
 
+Apply resource:
+
+```bash
+oc apply -f applications/base/01-placement-gitops.yaml
+```
+
+Example:
 ```yaml
 # applications/base/01-placement-gitops.yaml
 apiVersion: cluster.open-cluster-management.io/v1beta1
@@ -79,12 +101,6 @@ spec:
 
 NOTE: Only OpenShift clusters are registered to an Argo CD or OpenShift GitOps operator instance, not other Kubernetes clusters.
 
-Apply the base resources:
-
-```bash
-oc apply -k applications/base/
-```
-
 Verify:
 
 ```bash
@@ -97,7 +113,7 @@ oc get placementdecision -n openshift-gitops \
 
 ---
 
-## Configure GitOpsCluster
+### 5. Configure GitOpsCluster
 
 As of ACM 2.17, ACM supports three ways to deploy applications via ArgoCD ApplicationSets. Each of these models require a diffent GitOpsCluster configuration.
 - Model 1: Push model
@@ -106,11 +122,16 @@ As of ACM 2.17, ACM supports three ways to deploy applications via ArgoCD Applic
 
 Apply the configuration according on the model your using.
 
-### Model 1: Push
+#### Model 1: Push
 
 The hub ArgoCD instance deploys application resources directly to managed
 clusters using cluster credentials. This is the default model and the simplest
 to set up.
+
+Apply resource:
+```bash
+oc apply -f applications/overlay/push/02-gitopscluster.yaml
+```
 
 **How it works**:
 1. `GitOpsCluster` registers managed clusters as ArgoCD cluster secrets on
@@ -120,7 +141,7 @@ to set up.
 3. The hub ArgoCD Application controller pushes manifests directly to each
    managed cluster's API server.
 
-**GitOpsCluster** (no `gitopsAddon`):
+Example:
 
 ```yaml
 # applications/overlay/push/02-gitopscluster.yaml
@@ -140,14 +161,6 @@ spec:
     namespace: openshift-gitops
 ```
 
-Apply:
-
-```bash
-oc apply -k applications/overlay/push/
-```
-
-**ApplicationSet annotations**: None required (push is the default).
-
 This enables the Argo CD instance to deploy applications to any of those ACM Hub managed clusters.
 
 As we can see from the previous example the placementRef.name is defined as `clusters-for-gitops`, and is specified as target clusters for the GitOps instance that is installed in argoNamespace: openshift-gitops.
@@ -156,7 +169,7 @@ On the other hand, the argoServer.cluster specification requires the local-clust
 
 ---
 
-### Model 2: Pull (ArgoCD Controller)
+#### Model 2: Pull (ArgoCD Controller)
 
 Each managed cluster runs a full OpenShift GitOps (ArgoCD) instance. The hub
 ApplicationSet generates Applications that are propagated to spokes via
@@ -220,7 +233,7 @@ template:
 
 ---
 
-### Model 3: Pull (ArgoCD Agent)
+#### Model 3: Pull (ArgoCD Agent)
 
 Each managed cluster runs a lightweight ArgoCD agent that communicates with a
 principal component on the hub via gRPC. This provides the full ArgoCD UI
