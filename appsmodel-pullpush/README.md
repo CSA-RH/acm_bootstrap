@@ -53,7 +53,7 @@ Our ManagedClusterSetBinding object assigns ManagedClusterSet to the particular 
 Apply resource:
 
 ```bash
-oc apply -f applications/base/00-managedclustersetbinding.yaml
+oc apply -f appsmodel-pullpush/base/00-managedclustersetbinding.yaml
 ```
 
 Example:
@@ -75,7 +75,7 @@ In the namespace that is used in managed cluster set binding, create a placement
 Apply resource:
 
 ```bash
-oc apply -f applications/base/01-placement-gitops.yaml
+oc apply -f appsmodel-pullpush/base/01-placement-gitops.yaml
 ```
 
 Example:
@@ -130,7 +130,7 @@ to set up.
 
 Apply resource:
 ```bash
-oc apply -f applications/overlay/push/02-gitopscluster.yaml
+oc apply -f appsmodel-pullpush/overlay/push/02-gitopscluster.yaml
 ```
 
 **How it works**:
@@ -210,7 +210,7 @@ spec:
 Apply:
 
 ```bash
-oc apply -k applications/overlay/pull-argocontroller/
+oc apply -f appsmodel-pullpush/overlay/pull-argocontroller/.......
 ```
 
 **ApplicationSet annotations** (required in the template):
@@ -276,7 +276,7 @@ spec:
 Apply:
 
 ```bash
-oc apply -k applications/overlay/pull-agent/
+oc apply -f appsmodel-pullpush/overlay/pull-agent/....
 ```
 
 Verify agent deployment:
