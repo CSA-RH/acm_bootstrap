@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - 00-managedclustersetbinding.yaml
   - 01-placement-gitops.yaml
+  - 03-rbac-appset-placementdecisions.yaml
