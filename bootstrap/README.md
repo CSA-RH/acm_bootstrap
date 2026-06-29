@@ -19,13 +19,20 @@ wget -O ${HOME}/.config/kustomize/plugin/policy.open-cluster-management.io/v1/po
 chmod +x ${HOME}/.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
 ```
 
-## 2. Configure the cluster topology sets and the policy namespace
+## 2. Clone repository
+
+```bash
+git clone https://github.com/CSA-RH/acm_bootstrap.git
+cd acm_bootstrap
+```
+
+## 3. Deploy the cluster topology sets and the policy namespace
 
 ```bash
 oc apply -f bootstrap/clustergroups/
 ```
 
-## 3. Install GitOps operator on the hub:
+## 4. Install GitOps operator on the hub:
 
 ```bash
 kustomize build bootstrap/gitops --enable-alpha-plugins | oc apply -f -
