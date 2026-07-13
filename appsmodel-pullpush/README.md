@@ -4,6 +4,10 @@ Common prerequisites for ACM-managed GitOps deployments. These resources must
 be applied on the hub cluster before creating ApplicationSets or governance
 policies.
 
+> **Disclaimer:** This repository is for learning and testing purposes only.
+> All configurations should be thoroughly tested in a non-production
+> environment before applying to any production cluster.
+
 ---
 
 ## Deployment Models Overview

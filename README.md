@@ -2,6 +2,10 @@
 
 This repository contains the bootstrap configuration for ACM. It is organized into two sections:
 
+> **Disclaimer:** This repository is for learning and testing purposes only.
+> All configurations should be thoroughly tested in a non-production
+> environment before applying to any production cluster.
+
 ## 1. [Initial ACM Setup](bootstrap/README.md)
 
 Prerequisites and initial hub cluster configuration: PolicyGenerator plugin
