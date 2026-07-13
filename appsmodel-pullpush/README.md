@@ -18,7 +18,7 @@ happens.
 | **ArgoCD on hub** | Full instance (deploys to spokes) | ApplicationSet controller only | Full instance (principal) |
 | **ArgoCD on spokes** | None | Full instance per spoke | Lightweight agent per spoke |
 | **Deployment mechanism** | Hub pushes directly via cluster credentials | `ManifestWork` propagates Applications to spokes | gRPC sync between principal and agent |
-| **Status feedback** | Real-time via hub ArgoCD | Periodic via `MulticlusterApplicationSetReport` | Real-time via gRPC (full ArgoCD UI integration) |
+| **Status feedback** | Real-time via hub ArgoCD | Periodic via `Multicluster1pplicationSetReport` | Real-time via gRPC (full ArgoCD UI integration) |
 | **Network requirements** | Hub must reach spoke API servers | Spoke-to-Git repo access | Load Balancer for gRPC endpoint |
 | **GitOps add-on** | Not required | `gitopsAddon.enabled: true` | `gitopsAddon.enabled: true` + `argoCDAgent.enabled: true` |
 | **Scalability** | Limited by hub controller resources | Better (reconciliation distributed) | Better (reconciliation distributed) |
@@ -36,6 +36,7 @@ After registering, we can deploy applications to those clusters using Applicatio
 ## 1. Clone repository
 
 ```bash
+cd /tmp
 git clone https://github.com/CSA-RH/acm_bootstrap.git
 cd acm_bootstrap
 ```
@@ -184,7 +185,7 @@ ApplicationSet generates Applications that are propagated to spokes via
    and sends it to the corresponding managed cluster.
 4. The local ArgoCD on the spoke reconciles the Application, pulling manifests
    from the Git repository.
-5. Status is aggregated back via `MulticlusterApplicationSetReport`.
+5. Status is aggregated back via `Multicluster1pplicationSetReport`.
 
 **GitOpsCluster** (with `gitopsAddon`):
 
@@ -287,7 +288,7 @@ oc get gitopscluster gitops-clusters -n openshift-gitops \
 ```
 
 Expected condition types: `ManifestWorksApplied`, `CertificatesReady`,
-`ArgoCDAgentPrereqsReady`, `AddOnTemplateReady`, `ManagedClusterAddOnsReady`,
+`ArgoCDAgentPrereqsReady`, `AddOnTemplateReady`, `ManagedclusteraddOnsReady`,
 `AddOnDeploymentConfigsReady`, `ClustersRegistered`, `PlacementResolved`,
 `Ready`.
 
