@@ -13,6 +13,12 @@ installation, cluster topology (ManagedClusterSets, ManagedClusters,
 ManagedClusterSetBindings), RBAC, and OpenShift GitOps operator deployment
 via governance policies.
 
+The **PolicyGenerator** is a Kustomize plugin that converts simple YAML
+definitions into ACM `Policy`, `PlacementBinding`, and `PlacementRule`
+resources. It allows defining compliance and configuration policies in a
+concise format and generating the full ACM governance objects needed to
+enforce them across managed clusters.
+
 ## 2. [Application Deployment Models (Push / Pull)](appsmodel-pullpush/README.md)
 
 Configuring managed clusters for OpenShift GitOps and deploying applications
