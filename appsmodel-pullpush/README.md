@@ -151,7 +151,7 @@ As we can see from the previous example the placementRef.name is defined as `clu
 
 On the other hand, the argoServer.cluster specification requires the local-cluster value, because we will be using the OpenShift GitOps deployed in the OpenShift cluster that is also where the ACM Hub is installed.
 
-> **Note:** Pull model configurations (ArgoCD Controller and ArgoCD Agent)
+> **Note:** Pull model configurations (basic pull and ArgoCD-Agent)
 > will be added at a later stage.
 
 ---
