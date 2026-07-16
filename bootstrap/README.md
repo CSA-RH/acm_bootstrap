@@ -28,6 +28,21 @@ cd acm_bootstrap
 
 ## 3. Deploy the cluster topology sets and the policy namespace
 
+This will create the following resources on the hub cluster:
+
+- `Namespace`: policy namespace for ACM governance
+- `Role` / `ClusterRole`: RBAC for ApplicationSet PlacementDecision access
+- `Group`: ArgoCD admin group
+- `ManagedClusterSet`: cluster sets for prod and dev environments
+- `ManagedCluster`: managed cluster definitions (prod, dev)
+- `ManagedClusterSetBinding`: binds cluster sets to namespaces
+
+**These manifests define a sample cluster topology for a blank cluster.
+If your environment already has ManagedClusterSets, ManagedClusters, or
+RBAC configured, use your existing setup instead. Applying these
+manifests over an existing configuration may overwrite or conflict with
+your current setup.**
+
 ```bash
 oc apply -f bootstrap/clustergroups/
 ```
