@@ -6,7 +6,9 @@ This document describes the required configuration to install do the initial ACM
 
 ## 1. Install in you laptop the PolicyGenerator plug-in
 
-This is required to install the OpenShift-Gitops operator in the Hub cluster.
+The PolicyGenerator is a Kustomize plugin used only by the ACM
+governance policy framework. It is required here to install the
+OpenShift-Gitops operator on the Hub cluster via a governance policy.
 
 **Install PolicyGenerator locally to your laptop:**
 
