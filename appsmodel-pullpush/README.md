@@ -10,27 +10,6 @@ policies.
 
 ---
 
-## Deployment Models Overview
-
-ACM supports three ways to deploy applications via ArgoCD ApplicationSets.
-All three use the same `ApplicationSet` CRD with a `clusterDecisionResource`
-generator, but differ in **how** and **where** the ArgoCD reconciliation
-happens.
-
-| | Push | Pull (ArgoCD Controller) | Pull (ArgoCD Agent) |
-|---|---|---|---|
-| **ArgoCD on hub** | Full instance (deploys to spokes) | ApplicationSet controller only | Full instance (principal) |
-| **ArgoCD on spokes** | None | Full instance per spoke | Lightweight agent per spoke |
-| **Deployment mechanism** | Hub pushes directly via cluster credentials | `ManifestWork` propagates Applications to spokes | gRPC sync between principal and agent |
-| **Status feedback** | Real-time via hub ArgoCD | Periodic via `Multicluster1pplicationSetReport` | Real-time via gRPC (full ArgoCD UI integration) |
-| **Network requirements** | Hub must reach spoke API servers | Spoke-to-Git repo access | Load Balancer for gRPC endpoint |
-| **GitOps add-on** | Not required | `gitopsAddon.enabled: true` | `gitopsAddon.enabled: true` + `argoCDAgent.enabled: true` |
-| **Scalability** | Limited by hub controller resources | Better (reconciliation distributed) | Better (reconciliation distributed) |
-
-> **Source**: [Red Hat ACM 2.15 GitOps documentation](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.15/html-single/gitops/index)
-
----
-
 ## Configuring Managed Clusters for OpenShift GitOps / ArgoCD
 
 To configure and link OpenShift GitOps in ACM, we can register a set of one or more managed clusters to an instance of Argo CD or the OpenShift GitOps operator.
