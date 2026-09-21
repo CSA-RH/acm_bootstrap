@@ -20,7 +20,7 @@ spec:
     #channel: gitops-1.19
     source: redhat-operators
     sourceNamespace: openshift-marketplace
-  operatorGroup:
-    name: openshift-gitops-operator
-    namespace: openshift-gitops-operator
+  #operatorGroup:
+  #  name: openshift-gitops-operator
+  #  namespace: openshift-gitops-operator
   upgradeApproval: Automatic
