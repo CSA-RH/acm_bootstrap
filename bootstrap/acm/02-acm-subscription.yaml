@@ -1,0 +1,14 @@
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: advanced-cluster-management
+  namespace: open-cluster-management
+spec:
+  name: advanced-cluster-management
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic
+  # Pin to a specific channel for controlled upgrades.
+  # Run: oc get packagemanifest advanced-cluster-management -o jsonpath='{.status.channels[*].name}'
+  #channel: release-2.12

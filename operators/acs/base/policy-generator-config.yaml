@@ -1,0 +1,128 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: gen-policy-acs
+placementBindingDefaults:
+  name: binding-acs
+policyDefaults:
+  namespace: acm-policies
+  remediationAction: enforce
+  consolidateManifests: false
+  severity: high
+  categories:
+    - "CM Configuration Management"
+  controls:
+    - "CM-2 Baseline Configuration"
+  standards:
+    - "NIST SP 800-53"
+
+policies:
+  # ------------------------------------------------------------------ #
+  #  1. All clusters – install RHACS operator and create namespaces     #
+  #     Placed on acs-managed-placement (hub + managed clusters).       #
+  # ------------------------------------------------------------------ #
+  - name: acs-managed-operator
+    description: "Installs the RHACS operator and creates namespaces on all ACS clusters"
+    placement:
+      placementName: acs-managed-placement
+    manifests:
+      - path: operator-namespace.yml
+        name: acs-managed-operator-ns
+
+      - path: stackrox-namespace.yml
+        name: acs-managed-stackrox-ns
+
+      - path: managed/operatorpolicy.yml
+        name: acs-managed-operator-install
+
+  # ------------------------------------------------------------------ #
+  #  2. Hub – deploy Central                                            #
+  #     Depends on: acs-managed-operator (operator CRDs must exist)     #
+  #     Both policies are on local-cluster so extraDependencies works.  #
+  # ------------------------------------------------------------------ #
+  - name: acs-hub-central
+    description: "Deploys Central on the hub cluster"
+    placement:
+      placementName: acs-hub-placement
+    extraDependencies:
+      - name: acs-managed-operator
+        compliance: Compliant
+    manifests:
+      - path: hub/central.yml
+        name: acs-hub-central
+
+  # ------------------------------------------------------------------ #
+  #  3. Hub – create init bundle for SecuredCluster authentication      #
+  #     Depends on: acs-hub-central (Central must be running)           #
+  # ------------------------------------------------------------------ #
+  - name: acs-hub-init-bundle
+    description: "Creates an init bundle on Central and stores the TLS secrets on the hub"
+    placement:
+      placementName: acs-hub-placement
+    extraDependencies:
+      - name: acs-hub-central
+        compliance: Compliant
+    manifests:
+      - path: hub/init-bundle-rbac.yml
+        name: acs-hub-init-bundle-rbac
+
+      - path: hub/init-bundle-job.yml
+        name: acs-hub-init-bundle-job
+
+  # ------------------------------------------------------------------ #
+  #  4. Hub – copy init bundle secrets to the policy namespace          #
+  #     The hub template lookup restricts access to the policy's own    #
+  #     namespace. This step copies the TLS secrets from stackrox to    #
+  #     acm-policies so hub templates can access them.                  #
+  #     Depends on: acs-hub-init-bundle (secrets must exist on hub)     #
+  # ------------------------------------------------------------------ #
+  - name: acs-hub-copy-secrets
+    description: "Copies ACS init bundle secrets from stackrox to the policy namespace"
+    placement:
+      placementName: acs-hub-placement
+    extraDependencies:
+      - name: acs-hub-init-bundle
+        compliance: Compliant
+    manifests:
+      - path: hub/copy-secrets-to-policy-ns.yml
+        name: acs-hub-copy-secrets
+
+  # ------------------------------------------------------------------ #
+  #  5. Managed – distribute init bundle TLS secrets to managed clusters #
+  #     No cross-placement dependency on acs-hub-copy-secrets needed:   #
+  #     the hub templates ({{hub lookup ... hub}}) fail to resolve if   #
+  #     the secrets don't exist yet in acm-policies, so the policy is   #
+  #     not propagated until acs-hub-copy-secrets completes.            #
+  #     Depends on: acs-managed-operator (stackrox namespace must exist)#
+  # ------------------------------------------------------------------ #
+  - name: acs-managed-init-bundle
+    description: "Distributes the init bundle TLS secrets from the hub to managed clusters"
+    placement:
+      placementName: acs-managed-placement
+    extraDependencies:
+      - name: acs-managed-operator
+        compliance: Compliant
+    manifests:
+      - path: managed/init-bundle-secrets.yml
+        name: acs-managed-init-bundle-secrets
+
+  # ------------------------------------------------------------------ #
+  #  6. Managed – deploy SecuredCluster on managed clusters             #
+  #     Depends on: acs-managed-operator (CRD must exist)               #
+  #                 acs-managed-init-bundle (TLS secrets must exist)     #
+  #     Both dependencies share acs-managed-placement, so               #
+  #     extraDependencies resolves correctly on managed clusters.       #
+  # ------------------------------------------------------------------ #
+  - name: acs-managed-securedcluster
+    description: "Deploys SecuredCluster on managed clusters"
+    placement:
+      placementName: acs-managed-placement
+    extraDependencies:
+      - name: acs-managed-operator
+        compliance: Compliant
+      - name: acs-managed-init-bundle
+        compliance: Compliant
+    manifests:
+      - path: managed/securedcluster.yml
+        name: acs-managed-securedcluster

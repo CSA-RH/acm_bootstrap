@@ -1,7 +1,9 @@
 ---
+# On ROSA HCP the 'cluster-admins' Group is managed by ROSA and must not
+# be overwritten. Use a separate group for ArgoCD admin access instead.
 apiVersion: user.openshift.io/v1
 kind: Group
 metadata:
-  name: cluster-admins
+  name: argocd-admins
 users:
   - admin
